@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
+	"syscall"
 	"todo"
 	"todo/pkg/handler"
 	"todo/pkg/repository"
@@ -41,10 +44,31 @@ func main() {
 	
 	
 	srv := new(todo.Server)
+	go func() {
 	if err := srv.Run(viper.GetString("port"),handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("failed to run server: %v", err)
 	}
-}
+	}()
+
+	logrus.Print("App started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+		logrus.Print("App shutdown")
+
+		if err := srv.Shutdown(context.Background()); err != nil {
+			logrus.Errorf("failed to shutdown server: %v", err)
+		}
+
+		if err := db.Close(); err != nil {
+			logrus.Errorf("failed to close database: %v", err)
+		}
+	}
+
+
+
 
 func initConfig() error{
 	viper.AddConfigPath("configs")
