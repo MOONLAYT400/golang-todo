@@ -32,7 +32,6 @@ func (h *Handler) createList(c *gin.Context) {
 	})
 }
 
-
 type getAllListsResponse struct {
 	Data []todo.TodoList `json:"data"`
 }
