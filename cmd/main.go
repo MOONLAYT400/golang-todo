@@ -56,15 +56,15 @@ func main() {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-		logrus.Print("App shutdown")
+	logrus.Print("App shutdown")
 
-		if err := srv.Shutdown(context.Background()); err != nil {
-			logrus.Errorf("failed to shutdown server: %v", err)
-		}
+	if err := srv.Shutdown(context.Background()); err != nil {
+		logrus.Errorf("failed to shutdown server: %v", err)
+	}
 
-		if err := db.Close(); err != nil {
-			logrus.Errorf("failed to close database: %v", err)
-		}
+	if err := db.Close(); err != nil {
+		logrus.Errorf("failed to close database: %v", err)
+	}
 	}
 
 
