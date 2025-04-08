@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -45,6 +46,30 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 	})
 
 	return token.SignedString([]byte(salt))
+}
+
+func (s *AuthService) ParseToken(accessToken string) (int, error) {
+	token ,err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(accessToken *jwt.Token) (interface{}, error) {
+		if _, ok := accessToken.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+		return []byte(salt), nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok:=token.Claims.(*tokenClaims)
+	if !ok {
+		return 0, errors.New("token claims are not of type *tokenClaims")
+	}
+
+	if claims.ExpiresAt < time.Now().Unix() {
+		return 0, errors.New("token is expired")
+	}
+
+	return claims.UserId, nil
 }
 
 func  generatePasswordHash(password string) string {
