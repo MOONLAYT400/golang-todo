@@ -1,3 +1,4 @@
+// создаем пакет хендлеров
 package handler
 
 import (
@@ -6,24 +7,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// основная структура handler, аналог объекта и класса  в js одновременно
 type Handler struct{
 	services *service.Service
-	//InitRoutes()
 }
 
+// конструктор handler-а, как конструктор класса, создающий объект, функция-фабрика
 func NewHandler(services *service.Service) *Handler{
 	return &Handler{services: services} //new handler constructor with service
 }
 
+// инициализация маршрутов в хендлере, вызывается в main, синтаксис (h *Handler) показывает, что мы таким образом добавляем метод класса напряму в объект
+// по указателю, привязываем метод к конретному объекту 
 func (h *Handler) InitRoutes() *gin.Engine {
+	// создаем роутер с помощью пакета jin
 	router:= gin.New()
 
+	// группы маршрутов
 	auth:= router.Group("/auth")
 	{
+		// адрес маршрута и его обработчик
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 	}
-
+// на группу api привязываем middleware проверки токена - получаем не публичные эндпоинты
 	api:= router.Group("/api",h.userIdentity)
 	{
 		lists:= api.Group("/lists")

@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// создаем хендлеры сущностей todo item
+
 func (h *Handler) createItem(c *gin.Context) {
 	userId,err := getUserId(c)
 	if err != nil {

@@ -27,12 +27,14 @@ type TodoItem interface{
 	Update(userId, itemId int, input todo.UpdateItemInput) (error)
 }
 
+// объект класс  структура сервиса
 type Service struct {
 	Authorization
 	TodoList
 	TodoItem
 }
 
+// конструктор
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),

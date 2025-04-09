@@ -33,6 +33,7 @@ type Repository struct {
 	TodoItem
 }
 
+// конструктор репозитория, с корторым работают сервисы
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthSql(db),
